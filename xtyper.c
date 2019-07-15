@@ -1,7 +1,8 @@
-#include <stdio.h> // printf
-#include <stdlib.h> // exit
-#include <string.h> // memset
+#include <stdio.h> // (f)printf
+#include <stdlib.h> // exit, calloc
+#include <string.h> // memset, strlen, strcpy
 #include <stdbool.h> // bool, true, false
+#include <unistd.h> // usleep
 
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
@@ -49,6 +50,7 @@ bool type_string(char *str){
 
     while((key = *str)){
         send_key(key);
+        usleep(0); // fixes repeating key bug
         str++;
     }
 
@@ -56,21 +58,16 @@ bool type_string(char *str){
 }
 
 int main(int argc, char *argv[]){
-    char *text_buf = NULL;
-
     if(argc < 2 || argc > 2){
         printf("Syntax: %s \"text to type\"\n", argv[0]);
         return 0;
     }
 
-    text_buf = calloc(strlen(argv[1])+1, sizeof(char));
-    strcpy(text_buf, argv[1]);
-
     // open display
     open_display();
 
     // type!
-    type_string(text_buf);
+    type_string(argv[1]);
 
     return 0;
 }
